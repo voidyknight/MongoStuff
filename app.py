@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from pymongo import Connection
 
 #mongo setup
@@ -15,12 +15,24 @@ def main():
         username = request.form["user"]
         pwd = request.form["pwd"]
         if checkLogin(user, pwd):
-            #set logged in to true somehow idek
+            #set logged in to true somehow idek i think this is your thing Mir
             return redirect(url_for("userpage", user = username))
     return render_template("main.html")
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        age = request.form["age"]
+        username = request.form["user"]
+        pwd = request.form["pwd"]
+        if (name == None or email == None or age == None or
+            username == None or pwd == None): #b/c they are all mandatory
+            if len(db.users.find({"name":name})) == 0:
+                db.users.insert({"name":name, "email":email, "age":age,
+                                 "user":username, "pwd":pwd})
+                return redirect(url_for("main"))
     return render_template("register.html")
 
 #logout button on other pages will redirect to this

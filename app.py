@@ -11,6 +11,12 @@ app = Flask(__name__)
 
 @app.route("/", methods = ["GET", "POST"])
 def main():
+    if request.method == "POST":
+        username = request.form["user"]
+        pwd = request.form["pwd"]
+        if checkLogin(user, pwd):
+            #set logged in to true somehow idek
+            return redirect(url_for("userpage", user = username))
     return render_template("main.html")
 
 @app.route("/register", methods = ["GET", "POST"])
@@ -33,3 +39,9 @@ def about():
 #protected, allows user to change info and put more info also
 def settings():
     return render_template("settings.html")
+
+@app.route("/<user>")
+#protected, what they are sent to immediately, idek what it should contain
+def userpage(user = None):
+    return render_template("user.html")
+

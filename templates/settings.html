@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"> 
+<html> 
+<head>  
+	<link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename='css/bootstrap-theme.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.css') }}">
+<title>Home</title>
+</head>
+
+<body>
+	
+	<div class= "container"><h1>Website <span class="glyphicon glyphicon-ok"></span><h1><h3>Welcome {{user}} </h3>
+	<br>
+	<h1>Settings<span class="glyphicon glyphicon-bike"></span></h1>
+		<div class=" container form-group" style: "width:20px">
+			<p><form>
+				<label class="control-label">New User Name: </label><input type="text" class="form-control" name="user" placeholder="new username"><br>
+				<label class="control-label">New Password: </label><input type= "text" class="form-control" name="pword"placeholder="new password">
+			</form></p>
+			<div>
+	</div>
+</body>
+</html>

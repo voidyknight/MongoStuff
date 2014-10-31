@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"> 
+<html> 
+<head>  
+	<link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename='css/bootstrap-theme.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.css') }}">
+<title>Home</title>
+</head>
+
+<body>
+	
+	<div class= "container"><h1>Website <span class="glyphicon glyphicon-ok"></span></h1>
+			<center>
+	<br>
+	<div class= "container jumbotron " style="border-radius:30px; width:500px">
+	
+			<h1>Login</h1>
+				<form action="/userpage"class= "form-horizontal"role="form">
+					<div class= "form-group" >
+					<label class= "control-label">User Name</label> <input class="form-control" type="text" name="user" placeholder="Your User Name"><br><br>
+					<label class = "control-label">Password</label> <input class= "form-control" type ="password" name="pword" placeholder="Your password"><br><br>
+					<button type="submit" name="login" class=" btn btn-lg btn-warning">Login</button>
+				</div>
+				</form>
+				<a href="/register">Don't have an account? To Register in Click Here</a>		
+	</div>
+	</center>
+	</div>
+
+</body>
+</html>

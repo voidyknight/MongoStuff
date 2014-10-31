@@ -8,6 +8,8 @@ db = conn["leon_miranda"]
 #flask setup
 app = Flask(__name__)
 
+def checkLogin(user, pwd):
+    return True
 
 @app.route("/", methods = ["GET", "POST"])
 def main():
@@ -22,17 +24,19 @@ main
 @app.route("/register", methods = ["GET", "POST"])
 def register():
     if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        age = request.form["age"]
+        #name = request.form["name"]
+        #email = request.form["email"]
+        #age = request.form["age"]
         username = request.form["user"]
         pwd = request.form["pwd"]
-        if (name == None or email == None or age == None or
-            username == None or pwd == None): #b/c they are all mandatory
-            if len(db.users.find({"name":name})) == 0:
-                db.users.insert({"name":name, "email":email, "age":age,
-                                 "user":username, "pwd":pwd})
-                return redirect(url_for("main"))
+        #if (name == None or email == None or age == None or
+         #   username == None or pwd == None): #b/c they are all mandatory
+          #  if len(db.users.find({"name":name})) == 0:
+           #     db.users.insert({"name":name, "email":email, "age":age,
+            #                     "user":username, "pwd":pwd})
+             #   return redirect(url_for("main"))
+        db.users.insert({"user":username, "pwd":pwd})
+        return redirect(url_for("main"))
             #home.html = register.html deal with it
     return render_template("home.html")
 

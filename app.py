@@ -8,7 +8,7 @@ db = conn["leon_miranda"]
 #flask setup
 app = Flask(__name__)
 
-["leon_miranda"]
+
 @app.route("/", methods = ["GET", "POST"])
 def main():
     if request.method == "POST":
@@ -33,7 +33,8 @@ def register():
                 db.users.insert({"name":name, "email":email, "age":age,
                                  "user":username, "pwd":pwd})
                 return redirect(url_for("main"))
-    return render_template("register.html")
+            #home.html = register.html deal with it
+    return render_template("home.html")
 
 #logout button on other pages will redirect to this
 @app.route("/logout")
@@ -57,3 +58,6 @@ def settings():
 def userpage(user = None):
     return render_template("user.html")
 
+if __name__ == "__main__":
+    app.debug = True
+    app.run()

@@ -9,35 +9,46 @@ db = conn["leon_miranda"]
 app = Flask(__name__)
 
 def checkLogin(user, pwd):
-    return True
+    if user.lower() == "miranda":
+        return "Mirandas are not welcome here!"
+    elif user == "" or pwd == "":
+        return "You must enter a username AND a password"
+    return True 
 
-@app.route("/", methods = ["GET", "POST"])
-def main():
-    if request.method == "POST":
-        username = request.form["user"]
-        pwd = request.form["pwd"]
-        if checkLogin(user, pwd):
-            #set logged in to true somehow idek i think this is your thing Mir
-            return redirect(url_for("userpage", user = username))
-    return render_template("login.html")
-main
+def checkRegister(user, pwd):
+    if user == "" or pwd == "":
+        return "You must enter a username AND a password"
+    db.users.insert({"user":username, "pwd":pwd})
+    return True
+    
+@app.route("/login", methods = ["GET", "POST"])
+def login():
+    error=None
+    if "user" not in session:
+        if request.method == "POST":
+            username = request.form["user"]
+            pwd = request.form["pwd"]
+            error = checkLogin(username, pwd)
+            if error == True:
+                session["user"]=username
+                #set logged in to true somehow idek i think this is your thing Mir
+                return redirect(url_for("user"))
+        return render_template("login.html",error=error)
+    else:
+        return redirect(url_for("user"))
+
+
 @app.route("/register", methods = ["GET", "POST"])
+@app.route("/", methods = ["GET", "POST"])
 def register():
+    error=None
     if request.method == "POST":
-        #name = request.form["name"]
-        #email = request.form["email"]
-        #age = request.form["age"]
         username = request.form["user"]
         pwd = request.form["pwd"]
-        #if (name == None or email == None or age == None or
-         #   username == None or pwd == None): #b/c they are all mandatory
-          #  if len(db.users.find({"name":name})) == 0:
-           #     db.users.insert({"name":name, "email":email, "age":age,
-            #                     "user":username, "pwd":pwd})
-             #   return redirect(url_for("main"))
-        db.users.insert({"user":username, "pwd":pwd})
-        return redirect(url_for("main"))
-            #home.html = register.html deal with it
+        error = checkLogin(username, pwd)
+        if error == True:
+            session["user"]=username
+            return redirect(url_for("user"))
     return render_template("home.html")
 
 #logout button on other pages will redirect to this
@@ -45,23 +56,42 @@ def register():
 def logout():
     #log user out
     #page will have button to return to login page
+    session.pop('user',None)
+    session.pop('pwd',None)
     return render_template("logout.html")
 
 @app.route("/about")
 #unprotected page
 def about():
-    return render_template("about.html")
+    user=None
+    if "user" in session:
+        user=session["user"]
+    return render_template("about.html",user=user)
 
 @app.route("/settings", methods = ["GET", "POST"])
 #protected, allows user to change info and put more info also
 def settings():
-    return render_template("settings.html")
+    if "user" in session:
+        return render_template("settings.html", user=session["user"])
+    return redirect(url_for("login",error="Please login to access this page"))
 
-@app.route("/user")
+@app.route("/user",methods = ["GET", "POST"])
 #protected, what they are sent to immediately, idek what it should contain
-def userpage(user = None):
-    return render_template("user.html")
+def user():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("user.html", user=session["user"])
 
 if __name__ == "__main__":
     app.debug = True
+    app.secret_key=open("secret_key.txt").read()
     app.run()
+    #name = request.form["name"]
+    #email = request.form["email"]
+    #age = request.form["age"]
+            #if (name == None or email == None or age == None or
+         #   username == None or pwd == None): #b/c they are all mandatory
+          #  if len(db.users.find({"name":name})) == 0:
+           #     db.users.insert({"name":name, "email":email, "age":age,
+            #                     "user":username, "pwd":pwd})
+             #   return redirect(url_for("main"))

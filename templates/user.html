@@ -1,19 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"> 
-<html> 
-<head>  
-	<link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename='css/bootstrap-theme.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/bootstrap.css') }}">
-<title>Home</title>
-</head>
+{%extends "base.html"%}
 
-<body>
-	
-	<	<div class= "container"><a href="\"><h1>Website <span class="glyphicon glyphicon-ok"></span></a></h1><h3>Welcome {{user}}<h3>
+{% block bodycontent %}
+	<h3>Welcome {{user}}!</h3>
 			<center>
 	<br>
 		<div class="jumbotron">
 			<h1>Here is a random picture of a cat!</h1>
+			<img src="http://lorempixel.com/900/1000/cats/">
 		</div>
-	</div>
-</body>
-</html>
+{% endblock bodycontent %}

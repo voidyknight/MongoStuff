@@ -8,16 +8,30 @@ db = conn["leon_miranda"]
 #flask setup
 app = Flask(__name__)
 
+def lenCursor(cursor):
+    count = 0
+    for x in cursor:
+        count += 1
+    return count
+
 def checkLogin(user, pwd):
     if user.lower() == "miranda":
         return "Mirandas are not welcome here!"
     elif user == "" or pwd == "":
         return "You must enter a username AND a password"
-    return True 
+    pword = db.users.find({"user":user}, {"_id":0, "pwd":1})
+    if lenCursor(pword) == 0:
+        return "Wrong. Try again. (Hint: check your username)"
+    if pword[0]["pwd"] != pwd:
+        return "Wrong. Try again. (Hint: check your password)"
+    return True
+
 
 def checkRegister(user, pwd):
     if user == "" or pwd == "":
         return "You must enter a username AND a password"
+    elif lenCursor(db.users.find({"user":user})) != 0:
+        return "Username has been taken, please try again"
     db.users.insert({"user":username, "pwd":pwd})
     return True
     
@@ -31,7 +45,6 @@ def login():
             error = checkLogin(username, pwd)
             if error == True:
                 session["user"]=username
-                #set logged in to true somehow idek i think this is your thing Mir
                 return redirect(url_for("user"))
         return render_template("login.html",error=error)
     else:

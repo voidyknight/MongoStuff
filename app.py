@@ -57,7 +57,6 @@ def logout():
     #log user out
     #page will have button to return to login page
     session.pop('user',None)
-    session.pop('pwd',None)
     return render_template("logout.html")
 
 @app.route("/about")

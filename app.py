@@ -22,7 +22,7 @@ def checkLogin(user, pwd):
     pword = db.users.find({"user":user}, {"_id":0, "pwd":1})
     if lenCursor(pword) == 0:
         return "Wrong. Try again. (Hint: check your username)"
-    if pword[0]["pwd"] != pwd:
+    if db.users.find({"user":user}, {"_id":0, "pwd":1})[0]["pwd"] != pwd:
         return "Wrong. Try again. (Hint: check your password)"
     return True
 
@@ -32,7 +32,7 @@ def checkRegister(user, pwd):
         return "You must enter a username AND a password"
     elif lenCursor(db.users.find({"user":user})) != 0:
         return "Username has been taken, please try again"
-    db.users.insert({"user":username, "pwd":pwd})
+    db.users.insert({"user":user, "pwd":pwd})
     return True
     
 @app.route("/login", methods = ["GET", "POST"])
@@ -46,6 +46,7 @@ def login():
             if error == True:
                 session["user"]=username
                 return redirect(url_for("user"))
+        
         return render_template("login.html",error=error)
     else:
         return redirect(url_for("user"))
@@ -54,15 +55,18 @@ def login():
 @app.route("/register", methods = ["GET", "POST"])
 @app.route("/", methods = ["GET", "POST"])
 def register():
-    error=None
-    if request.method == "POST":
-        username = request.form["user"]
-        pwd = request.form["pwd"]
-        error = checkLogin(username, pwd)
-        if error == True:
-            session["user"]=username
-            return redirect(url_for("user"))
-    return render_template("home.html")
+    if "user" not in session:
+        error=None
+        if request.method == "POST":
+            username = request.form["user"]
+            pwd = request.form["pwd"]
+            error = checkRegister(username, pwd)
+            if error == True:
+                session["user"]=username
+                return redirect(url_for("user"))
+        return render_template("home.html", error=error)
+    else:
+        return redirect(url_for("user"))
 
 #logout button on other pages will redirect to this
 @app.route("/logout")
@@ -83,8 +87,20 @@ def about():
 @app.route("/settings", methods = ["GET", "POST"])
 #protected, allows user to change info and put more info also
 def settings():
+    error = None
     if "user" in session:
-        return render_template("settings.html", user=session["user"])
+        #try:
+            print "TrYING"
+            if request.method == "POST":
+                print "POSTing"
+                username = request.form["user"]
+                pwd = request.form["pword"]
+                db.users.update({"user":session["user"]},{"$set": {'user':username,"pwd":pwd}})
+                session["user"]=username
+                error = "Your username and password have been updated"
+                return render_template("settings.html", user=session["user"],error=error)
+            #except:
+            return render_template("settings.html", user=session["user"],error=error)
     return redirect(url_for("login",error="Please login to access this page"))
 
 @app.route("/user",methods = ["GET", "POST"])
